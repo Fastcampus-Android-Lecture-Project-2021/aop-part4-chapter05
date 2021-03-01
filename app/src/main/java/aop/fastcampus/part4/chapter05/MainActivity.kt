@@ -1,5 +1,6 @@
 package aop.fastcampus.part4.chapter05
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +20,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        initViews()
+
         GlobalScope.launch {
             val dataJob = addMockData()
             dataJob.join()
@@ -26,6 +29,14 @@ class MainActivity : AppCompatActivity() {
             withContext(Dispatchers.Main) {
                 Log.e("histories", searchHistories.toString())
             }
+        }
+    }
+
+    private fun initViews() = with(binding) {
+        searchButton.setOnClickListener {
+            startActivity(
+                Intent(this@MainActivity, SearchActivity::class.java)
+            )
         }
     }
 
