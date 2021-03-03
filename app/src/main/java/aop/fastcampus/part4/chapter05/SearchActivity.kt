@@ -1,10 +1,13 @@
 package aop.fastcampus.part4.chapter05
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.core.view.isGone
+import aop.fastcampus.part4.chapter05.RepositoryActivity.Companion.REPOSITORY_NAME_KEY
+import aop.fastcampus.part4.chapter05.RepositoryActivity.Companion.REPOSITORY_OWNER_KEY
 import aop.fastcampus.part4.chapter05.data.entity.GithubRepoEntity
 import aop.fastcampus.part4.chapter05.databinding.ActivitySearchBinding
 import aop.fastcampus.part4.chapter05.utillity.RetrofitUtil
@@ -46,6 +49,7 @@ class SearchActivity : AppCompatActivity(), CoroutineScope {
     }
 
     private fun searchKeyword(ketwordString: String) {
+        showLoading(true)
         launch(coroutineContext) {
             try {
                 withContext(Dispatchers.IO) {
@@ -55,7 +59,6 @@ class SearchActivity : AppCompatActivity(), CoroutineScope {
                     if (response.isSuccessful) {
                         val body = response.body()
                         withContext(Dispatchers.Main) {
-                            Log.e("response", body.toString())
                             body?.let { searchResponse ->
                                 setData(searchResponse.items)
                             }
@@ -69,11 +72,27 @@ class SearchActivity : AppCompatActivity(), CoroutineScope {
         }
     }
 
-    private fun setData(githubRepoList: List<GithubRepoEntity>) {
-        adapter.setSearchResultList(githubRepoList) {
-            Toast.makeText(this, "이름 : ${it.fullName}", Toast.LENGTH_SHORT).show()
-
+    private fun setData(githubRepoList: List<GithubRepoEntity>) = with(binding) {
+        showLoading(false)
+        if (githubRepoList.isEmpty()) {
+            emptyResultTextView.isGone = false
+            recyclerView.isGone = true
+        } else {
+            emptyResultTextView.isGone = true
+            recyclerView.isGone = false
+            adapter.setSearchResultList(githubRepoList) {
+                startActivity(
+                    Intent(this@SearchActivity, RepositoryActivity::class.java).apply {
+                        putExtra(REPOSITORY_OWNER_KEY, it.owner.login)
+                        putExtra(REPOSITORY_NAME_KEY, it.name)
+                    }
+                )
+            }
         }
+    }
+
+    private fun showLoading(isShown: Boolean) = with(binding) {
+        progressBar.isGone = isShown.not()
     }
 
 }

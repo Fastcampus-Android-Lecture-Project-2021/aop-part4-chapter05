@@ -82,3 +82,4 @@ obj/
 .externalNativeBuild
 .cxx
 local.properties
+/projectFilesBackup/.idea/workspace.xml

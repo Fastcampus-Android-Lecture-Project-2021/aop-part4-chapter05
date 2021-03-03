@@ -72,6 +72,9 @@ class SignInActivity : AppCompatActivity(), CoroutineScope {
                 val progressJob = getAccessToken(code)
                 progressJob.join()
                 dismissProgress()
+                if (checkAuthCodeExist()) {
+                    launchMainActivity()
+                }
             }
         }
 
