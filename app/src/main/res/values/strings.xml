@@ -4,4 +4,5 @@
     <string name="please_input_search_keyword">검색어를 입력해주세요.</string>
     <string name="search">검색</string>
     <string name="empty_result_text">검색 결과가 없습니다.</string>
+    <string name="empty_history_text">찜한 레포지토리가 없습니다.</string>
 </resources>
